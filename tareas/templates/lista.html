@@ -4,18 +4,44 @@
     <title>Lista de tareas</title>
 </head>
 <body>
-    <h1>Mis tareas</h1>
+    <h1>Tablero de tareas</h1>
 
-    <p>Hola {{ request.user.username }}</p>
+    <div style="display: flex; gap: 20px;">
 
-    <a href="/logout/">Cerrar sesión</a>
+        <!-- Pendientes -->
+        <div>
+            <h2>Pendiente</h2>
+            {% for tarea in pendientes %}
+                <p>
+                    {{ tarea.titulo }}
+                    <br>
+                    <a href="/estado/{{ tarea.id }}/progreso/">Mover a progreso</a>
+                </p>
+            {% empty %}
+                <p>No hay tareas</p>
+            {% endfor %}
+        </div>
 
-    <ul>
-        {% for tarea in tareas %}
-            <li>{{ tarea }}</li>
-        {% empty %}
-            <li>No hay tareas.</li>
-        {% endfor %}
-    </ul>
+        <!-- En progreso -->
+        <div>
+            <h2>En progreso</h2>
+            {% for tarea in progreso %}
+                <p>
+                    {{ tarea.titulo }}
+                    <br>
+                    <a href="/estado/{{ tarea.id }}/completado/">Completar</a>
+                </p>
+            {% endfor %}
+        </div>
+
+        <!-- Completadas -->
+        <div>
+            <h2>Completadas</h2>
+            {% for tarea in completadas %}
+                <p>{{ tarea.titulo }}</p>
+            {% endfor %}
+        </div>
+
+    </div>
 </body>
 </html>

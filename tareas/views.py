@@ -5,8 +5,15 @@ from django.contrib.auth.decorators import login_required
 
 @login_required
 def lista_tareas(request):
-    tareas = Tarea.objects.filter(usuario=request.user)
-    return render(request, 'tareas/lista.html', {'tareas': tareas})
+    pendientes = Tarea.objects.filter(usuario=request.user, estado='pendiente')
+    progreso = Tarea.objects.filter(usuario=request.user, estado='progreso')
+    completadas = Tarea.objects.filter(usuario=request.user, estado='completado')
+    
+    return render(request, 'tareas/lista.html', {
+        'pendientes': pendientes,
+        'progreso': progreso,
+        'completadas': completadas,
+    })
 
 @login_required
 def crear_tarea(request):
@@ -34,4 +41,11 @@ def completar_tarea(request, id):
 def eliminar_tarea(request, id):
     tarea = get_object_or_404(Tarea, id=id, usuario=request.user)
     tarea.delete()
+    return redirect('lista')
+
+@login_required
+def cambiar_estado(request, id, estado):
+    tarea = get_object_or_404(Tarea, id=id, usuario=request.user)
+    tarea.estado = estado
+    tarea.save()
     return redirect('lista')
