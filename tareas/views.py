@@ -17,7 +17,12 @@ def lista_tareas(request):
 
 @login_required
 def crear_tarea(request):
-    if request.method == 'POST':
+    form = TareaForm(request.POST)
+    if form.is_valid():
+        tarea = form.save(commit=False)
+        tarea.usuario = request.user
+        tarea.save()
+        
         titulo = request.POST.get('titulo')
         descripcion = request.POST.get('descripcion')
 
@@ -32,8 +37,8 @@ def crear_tarea(request):
 
 @login_required
 def completar_tarea(request, id):
-    tarea = Tarea.objects.get(id=id)
-    tarea.completada = True
+    tarea = get_object_or_404(Tarea,id=id,usuario=request.user)
+    tarea.estado = 'completado'
     tarea.save()
     return redirect('lista')
 
